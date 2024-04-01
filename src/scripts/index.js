@@ -1,7 +1,6 @@
 import { initialCards } from "./cards";
 import { createCard, deleteCard, likeCard } from "../components/card.js";
 import { openPopup, closePopup, openImagePopup } from "../components/modal.js";
-import { Template } from "webpack";
 
 const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
