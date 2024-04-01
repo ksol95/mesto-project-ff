@@ -1,6 +1,11 @@
 import { initialCards } from "./cards";
-import { createCard, deleteCard, likeCard } from "../components/card.js";
-import { openPopup, closePopup, openImagePopup } from "../components/modal.js";
+import { createCard } from "../components/card.js";
+import {
+  openPopup,
+  closePopup,
+  openImagePopup,
+  initClosedPopups,
+} from "../components/modal.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
@@ -31,14 +36,14 @@ function loadProfileToPopup() {
   profileJobInput.value = profileDescription.textContent;
 }
 
-function handleProfileForm(evt) {
+function updateProfileForm(evt) {
   evt.preventDefault();
   profileDescription.textContent = profileJobInput.value;
   profileTitle.textContent = profileNameInput.value;
   closePopup(popupEditProfile);
 }
 
-function handleCardsForm(evt) {
+function addNewCardForm(evt) {
   evt.preventDefault();
   placesList.prepend(
     createCard(
@@ -51,8 +56,8 @@ function handleCardsForm(evt) {
   closePopup(popupAddNewCard);
 }
 
-profileForm.addEventListener("submit", handleProfileForm);
-cardsForm.addEventListener("submit", handleCardsForm);
+profileForm.addEventListener("submit", updateProfileForm);
+cardsForm.addEventListener("submit", addNewCardForm);
 
 profileEditButton.addEventListener("click", () => {
   openPopup(popupEditProfile);
@@ -63,6 +68,7 @@ cardAddButton.addEventListener("click", () => {
   openPopup(popupAddNewCard);
 });
 
+initClosedPopups();
 //вывод всех карточек из массива
 initialCards.forEach((el) => {
   placesList.append(createCard(cardTemplate, el.link, el.name, openImagePopup));

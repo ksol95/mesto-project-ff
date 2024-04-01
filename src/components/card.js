@@ -1,5 +1,5 @@
 const deleteCard = (evt) => {
-  evt.target.parentElement.remove();
+  evt.target.closest(".card").remove();
 };
 
 const likeCard = (evt) => {
@@ -12,7 +12,9 @@ function createCard(template, cardLink, cardName, openImagepPopup) {
   card.querySelector(".card__image").setAttribute("alt", cardName);
   card.querySelector(".card__image").addEventListener("click", openImagepPopup);
   card.querySelector(".card__title").textContent = cardName;
-  card.querySelector(".card__delete-button").addEventListener("click", deleteCard);
+  card
+    .querySelector(".card__delete-button")
+    .addEventListener("click", deleteCard);
   card.querySelector(".card__like-button").addEventListener("click", likeCard);
   return card;
 }
