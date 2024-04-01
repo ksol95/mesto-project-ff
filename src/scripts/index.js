@@ -21,8 +21,10 @@ const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
 const cardsForm = document.querySelector(".popup__form[name='new-place']");
-const cardNameInput = profileForm.querySelector(".popup__input_type_card-name");
-const cardUrlInput = profileForm.querySelector(".popup__input_type_card-url");
+const cardNameInput = cardsForm.querySelector(
+  ".popup__input[name='place-name']"
+);
+const cardUrlInput = cardsForm.querySelector(".popup__input[name='link']");
 
 function loadProfileToPopup() {
   profileNameInput.value = profileTitle.textContent;
@@ -38,8 +40,14 @@ function handleProfileForm(evt) {
 
 function handleCardsForm(evt) {
   evt.preventDefault();
-  console.log(evt);
-  //createCard(cardTemplate, );
+  placesList.prepend(
+    createCard(
+      cardTemplate,
+      cardUrlInput.value,
+      cardNameInput.value,
+      openImagePopup
+    )
+  );
   closePopup(popupAddNewCard);
 }
 
@@ -57,14 +65,5 @@ cardAddButton.addEventListener("click", () => {
 
 //вывод всех карточек из массива
 initialCards.forEach((el) => {
-  placesList.append(
-    createCard(
-      cardTemplate,
-      el.link,
-      el.name,
-      deleteCard,
-      likeCard,
-      openImagePopup
-    )
-  );
+  placesList.append(createCard(cardTemplate, el.link, el.name, openImagePopup));
 });
