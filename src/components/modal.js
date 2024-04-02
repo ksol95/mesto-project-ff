@@ -1,15 +1,4 @@
 const popups = document.querySelectorAll(".popup");
-const popupImage = document.querySelector(".popup_type_image");
-const image = popupImage.querySelector(".popup__image");
-const caption = popupImage.querySelector(".popup__caption");
-
-const openImagePopup = (evt) => {
-  image.setAttribute("title", evt.target.getAttribute("alt"));
-  image.setAttribute("alt", evt.target.getAttribute("alt"));
-  image.setAttribute("src", evt.target.getAttribute("src"));
-  caption.textContent = evt.target.getAttribute("alt");
-  openPopup(popupImage);
-};
 
 function closedKeyHandler(evt) {
   if (evt.key === "Escape") {
@@ -44,4 +33,4 @@ function initClosedPopups() {
   });
 }
 
-export { openPopup, closePopup, openImagePopup, initClosedPopups };
+export { openPopup, closePopup, initClosedPopups };

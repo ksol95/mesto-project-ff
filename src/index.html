@@ -7,6 +7,7 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="icon" href="<%=require('./images/logo.svg')%>" type="image/svg+xml" />
     <title>Mesto</title>
   </head>
   <body class="page">
@@ -48,6 +49,7 @@
               name="name"
               class="popup__input popup__input_type_name"
               placeholder="Имя"
+              autocomplete="name"
               required
             />
             <input
@@ -55,6 +57,7 @@
               name="description"
               class="popup__input popup__input_type_description"
               placeholder="Занятие"
+              autocomplete="organization-title"
               required
             />
             <button type="submit" class="button popup__button">
@@ -73,6 +76,7 @@
               name="place-name"
               class="popup__input popup__input_type_card-name"
               placeholder="Название"
+              autocomplete="off"
               required
             />
             <input
@@ -80,6 +84,7 @@
               name="link"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
+              autocomplete="off"
               required
             />
             <button type="submit" class="button popup__button">

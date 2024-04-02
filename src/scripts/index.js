@@ -3,7 +3,6 @@ import { createCard } from "../components/card.js";
 import {
   openPopup,
   closePopup,
-  openImagePopup,
   initClosedPopups,
 } from "../components/modal.js";
 
@@ -14,50 +13,66 @@ const profileEditButton = document.querySelector(".profile__edit-button");
 const cardAddButton = document.querySelector(".profile__add-button");
 
 const popupEditProfile = document.querySelector(".popup_type_edit");
-const popupAddNewCard = document.querySelector(".popup_type_new-card");
-
-const profileForm = document.querySelector(".popup__form[name='editProfile']");
-const profileNameInput = profileForm.querySelector(".popup__input_type_name");
-const profileJobInput = profileForm.querySelector(
+const profileEditForm = document.querySelector(
+  ".popup__form[name='editProfile']"
+);
+const profileNameInput = profileEditForm.querySelector(
+  ".popup__input_type_name"
+);
+const profileJobInput = profileEditForm.querySelector(
   ".popup__input_type_description"
 );
-
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
-const cardsForm = document.querySelector(".popup__form[name='new-place']");
-const cardNameInput = cardsForm.querySelector(
+const popupAddNewCard = document.querySelector(".popup_type_new-card");
+const newCardsForm = document.querySelector(".popup__form[name='new-place']");
+const newCardNameInput = newCardsForm.querySelector(
   ".popup__input[name='place-name']"
 );
-const cardUrlInput = cardsForm.querySelector(".popup__input[name='link']");
+const newCardUrlInput = newCardsForm.querySelector(
+  ".popup__input[name='link']"
+);
+const popupTypeImage = document.querySelector(".popup_type_image");
+const imageFromPopup = popupTypeImage.querySelector(".popup__image");
+const captionFromPopup = popupTypeImage.querySelector(".popup__caption");
+
+const openImagePopup = (evt) => {
+  imageFromPopup.setAttribute("title", evt.target.getAttribute("alt"));
+  imageFromPopup.setAttribute("alt", evt.target.getAttribute("alt"));
+  imageFromPopup.setAttribute("src", evt.target.getAttribute("src"));
+  captionFromPopup.textContent = evt.target.getAttribute("alt");
+  openPopup(popupTypeImage);
+};
+
+const updateProfileForm = (evt) => {
+  evt.preventDefault();
+  profileDescription.textContent = profileJobInput.value;
+  profileTitle.textContent = profileNameInput.value;
+  closePopup(popupEditProfile);
+};
+
+const addNewCardForm = (evt) => {
+  evt.preventDefault();
+  placesList.prepend(
+    createCard(
+      cardTemplate,
+      newCardUrlInput.value,
+      newCardNameInput.value,
+      openImagePopup
+    )
+  );
+  newCardsForm.reset();
+  closePopup(popupAddNewCard);
+};
 
 function loadProfileToPopup() {
   profileNameInput.value = profileTitle.textContent;
   profileJobInput.value = profileDescription.textContent;
 }
 
-function updateProfileForm(evt) {
-  evt.preventDefault();
-  profileDescription.textContent = profileJobInput.value;
-  profileTitle.textContent = profileNameInput.value;
-  closePopup(popupEditProfile);
-}
-
-function addNewCardForm(evt) {
-  evt.preventDefault();
-  placesList.prepend(
-    createCard(
-      cardTemplate,
-      cardUrlInput.value,
-      cardNameInput.value,
-      openImagePopup
-    )
-  );
-  closePopup(popupAddNewCard);
-}
-
-profileForm.addEventListener("submit", updateProfileForm);
-cardsForm.addEventListener("submit", addNewCardForm);
+profileEditForm.addEventListener("submit", updateProfileForm);
+newCardsForm.addEventListener("submit", addNewCardForm);
 
 profileEditButton.addEventListener("click", () => {
   openPopup(popupEditProfile);
