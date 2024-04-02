@@ -62,7 +62,7 @@ const addNewCardForm = (evt) => {
       openImagePopup
     )
   );
-  newCardsForm.reset();
+  evt.target.reset();
   closePopup(popupAddNewCard);
 };
 
