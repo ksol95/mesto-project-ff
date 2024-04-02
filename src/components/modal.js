@@ -1,20 +1,17 @@
 const popups = document.querySelectorAll(".popup");
-
-function closedKeyHandler(evt) {
+const closePopup = (popup) => {
+  popup.classList.remove("popup_is-opened");
+  document.removeEventListener("keydown", closedKeyHandler);
+};
+const openPopup = (popup) => {
+  popup.classList.add("popup_is-opened");
+  document.addEventListener("keydown", closedKeyHandler);
+};
+const closedKeyHandler = (evt) => {
   if (evt.key === "Escape") {
     closePopup(document.querySelector(".popup_is-opened"));
   }
-}
-
-function closePopup(popup) {
-  popup.classList.remove("popup_is-opened");
-  document.removeEventListener("keydown", closedKeyHandler);
-}
-
-function openPopup(popup) {
-  popup.classList.add("popup_is-opened");
-  document.addEventListener("keydown", closedKeyHandler);
-}
+};
 
 // Добавляю события закрытия по кнопке и оверлей всем popup
 function initClosedPopups() {
