@@ -62,8 +62,8 @@ const addNewCardForm = (evt) => {
       openImagePopup
     )
   );
-  evt.target.reset();
   closePopup(popupAddNewCard);
+  evt.target.reset();
 };
 
 function loadProfileToPopup() {
