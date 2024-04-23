@@ -1,4 +1,3 @@
-import { initialCards } from "./cards";
 import { createCard } from "../components/card.js";
 import { enableValidation, clearValidation } from "./validation.js";
 import {
@@ -9,6 +8,7 @@ import {
 
 const token = "a1b07ad8-68b9-4aea-9bd1-7f4f85e9a697";
 const cohortId = "wff-cohort-12";
+let userID = "";
 
 const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
@@ -97,7 +97,10 @@ const getProfileInfo = () => {
       if (res.ok) return res.json();
       return Promise.reject(res.status);
     })
-    .then((res) => renderProfileInfo(res))
+    .then((res) => {
+      renderProfileInfo(res);
+      userID = res._id;
+    })
     .catch((err) =>
       renderProfileInfo({
         name: `Ошибка: ${err}`,
@@ -149,7 +152,7 @@ const getCards = () => {
     .then((res) => {
       res.forEach((card) => {
         placesList.append(
-          createCard(cardTemplate, card.link, card.name, openImagePopup)
+          createCard(cardTemplate, card, userID, openImagePopup)
         );
       });
     })
@@ -171,10 +174,20 @@ const addNewCardToServer = (name, link) => {
     .then((res) => res.json())
     .then((card) => {
       placesList.prepend(
-        createCard(cardTemplate, card.link, card.name, openImagePopup)
+        createCard(cardTemplate, card, userID, openImagePopup)
       );
     })
     .catch((err) => console.log(`Ошибка ${err}`));
+};
+
+export const deleteCardFromServer = (cardID) => {
+  fetch(`https://nomoreparties.co/v1/${cohortId}/cards/${cardID}`, {
+    method: "DELETE",
+    headers: {
+      authorization: token,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 //Получить информацию о пользователе с серверва

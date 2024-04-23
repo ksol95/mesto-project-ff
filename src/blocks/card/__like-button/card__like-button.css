@@ -1,3 +1,16 @@
+.card__like-button-group{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.card__like-counter{
+  font-size: 13px;
+  line-height: 1;
+  color: inherit;
+}
+
 .card__like-button {
   width: 21px;
   height: 18px;
