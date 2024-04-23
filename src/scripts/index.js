@@ -1,5 +1,6 @@
 import { initialCards } from "./cards";
 import { createCard } from "../components/card.js";
+import { enableValidation, clearValidation } from "./validation.js";
 import {
   openPopup,
   closePopup,
@@ -44,12 +45,14 @@ const openImagePopup = (evt) => {
   captionFromPopup.textContent = evt.target.getAttribute("alt");
   openPopup(popupTypeImage);
 };
+
 const updateProfileForm = (evt) => {
   evt.preventDefault();
   profileDescription.textContent = profileJobInput.value;
   profileTitle.textContent = profileNameInput.value;
   closePopup(popupEditProfile);
 };
+
 const addNewCardForm = (evt) => {
   evt.preventDefault();
   placesList.prepend(
@@ -62,6 +65,15 @@ const addNewCardForm = (evt) => {
   );
   closePopup(popupAddNewCard);
   evt.target.reset();
+};
+
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
 };
 
 //Установка всем popup события закрытия
@@ -80,7 +92,10 @@ formNewCard.addEventListener("submit", addNewCardForm);
 profileEditButton.addEventListener("click", () => {
   profileNameInput.value = profileTitle.textContent;
   profileJobInput.value = profileDescription.textContent;
+  clearValidation(profileEditForm, validationConfig);
   openPopup(popupEditProfile);
 });
 
 profileEditForm.addEventListener("submit", updateProfileForm);
+
+enableValidation(validationConfig);

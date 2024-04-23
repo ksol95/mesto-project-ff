@@ -7,7 +7,11 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="icon" href="<%=require('./images/logo.svg')%>" type="image/svg+xml" />
+    <link
+      rel="icon"
+      href="<%=require('./images/logo.svg')%>"
+      type="image/svg+xml"
+    />
     <title>Mesto</title>
   </head>
   <body class="page">
@@ -47,19 +51,32 @@
             <input
               type="text"
               name="name"
+              id="name-input"
               class="popup__input popup__input_type_name"
               placeholder="Имя"
               autocomplete="name"
               required
+              minlength="2"
+              maxlength="40"
+              pattern="[а-яёА-ЯЁ a-zA-Z \-]+"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
+            <span class="popup__input-error name-input-error"></span>
+
             <input
               type="text"
               name="description"
+              id="description-input"
               class="popup__input popup__input_type_description"
               placeholder="Занятие"
               autocomplete="organization-title"
               required
+              minlength="2"
+              maxlength="200"
+              pattern="[а-яёА-ЯЁ a-zA-Z \-]+"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
+            <span class="popup__input-error description-input-error"></span>
             <button type="submit" class="button popup__button">
               Сохранить
             </button>
@@ -74,19 +91,27 @@
             <input
               type="text"
               name="place-name"
+              id="place-name"
               class="popup__input popup__input_type_card-name"
               placeholder="Название"
               autocomplete="off"
               required
+              minlength="2"
+              maxlength="30"
+              pattern="[а-яёА-ЯЁ a-zA-Z \-]+"
+              data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
+            <span class="popup__input-error place-name-error"></span>
             <input
               type="url"
               name="link"
+              id="link-input"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
               autocomplete="off"
               required
             />
+            <span class="popup__input-error link-input-error"></span>
             <button type="submit" class="button popup__button">
               Сохранить
             </button>
