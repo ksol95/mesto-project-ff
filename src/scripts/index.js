@@ -104,8 +104,7 @@ const getProfileInfo = () => {
         about: `Ошибка: ${err}`,
         avatar: "./images/avatar.jpg",
       })
-    )
-    .finally(() => console.log("loading"));
+    );
 };
 
 const renderProfileInfo = (profile) => {
@@ -154,8 +153,7 @@ const getCards = () => {
         );
       });
     })
-    .catch((err) => console.log(`Ошибка: ${err}`))
-    .finally(() => console.log("Карточки"));
+    .catch((err) => console.log(`Ошибка: ${err}`));
 };
 
 const addNewCardToServer = (name, link) => {
