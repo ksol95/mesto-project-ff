@@ -1,80 +1,100 @@
-const request = {
-  url: "https://nomoreparties.co/v1/",
-  token: "a1b07ad8-68b9-4aea-9bd1-7f4f85e9a697",
-  cohortId: "wff-cohort-12",
+const requestConfig = {
+  baseUrl: "https://nomoreparties.co/v1/wff-cohort-12",
+  headers: {
+    authorization: "a1b07ad8-68b9-4aea-9bd1-7f4f85e9a697",
+    "Content-Type": "application/json",
+  },
 };
 
 const getMyProfileInfo = () => {
-  return fetch(`${request.url}${request.cohortId}/users/me`, {
-    headers: {
-      authorization: request.token,
-    },
+  return fetch(`${requestConfig.baseUrl}/users/me`, {
+    headers: requestConfig.headers,
+  }).then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
 const updateProfileToServer = (name, about) => {
-  fetch(`${request.url}${request.cohortId}/users/me`, {
+  fetch(`${requestConfig.baseUrl}/users/me`, {
     method: "PATCH",
-    headers: {
-      authorization: request.token,
-      "Content-Type": "application/json; charset=UTF-8",
-    },
+    headers: requestConfig.headers,
     body: JSON.stringify({
       name: name,
       about: about,
     }),
+  }).then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
 const getCards = () => {
-  return fetch(`${request.url}${request.cohortId}/cards`, {
-    headers: {
-      authorization: request.token,
-    },
+  return fetch(`${requestConfig.baseUrl}/cards`, {
+    headers: requestConfig.headers,
+  }).then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
 const addNewCardToServer = (name, link) => {
-  return fetch(`${request.url}${request.cohortId}/cards`, {
+  return fetch(`${requestConfig.baseUrl}/cards`, {
     method: "POST",
-    headers: {
-      authorization: request.token,
-      "Content-Type": "application/json",
-    },
+    headers: requestConfig.headers,
     body: JSON.stringify({
       name: name,
       link: link,
     }),
+  }).then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
 const deleteCardFromServer = (cardID) => {
-  return fetch(`${request.url}${request.cohortId}/cards/${cardID}`, {
+  return fetch(`${requestConfig.baseUrl}/cards/${cardID}`, {
     method: "DELETE",
-    headers: {
-      authorization: request.token,
-      "Content-Type": "application/json",
-    },
+    headers: requestConfig.headers,
+  }).then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
 const likeCardRequest = (cardID) => {
-  return fetch(`${request.url}${request.cohortId}//cards/likes/${cardID}`, {
+  return fetch(`${requestConfig.baseUrl}//cards/likes/${cardID}`, {
     method: "PUT",
-    headers: {
-      authorization: request.token,
-      "Content-Type": "application/json",
-    },
+    headers: requestConfig.headers,
+  }).then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
 const unLikeCardRequest = (cardID) => {
-  return fetch(`${request.url}${request.cohortId}//cards/likes/${cardID}`, {
+  return fetch(`${requestConfig.baseUrl}//cards/likes/${cardID}`, {
     method: "DELETE",
     headers: {
-      authorization: request.token,
+      authorization: "a1b07ad8-68b9-4aea-9bd1-7f4f85e9a697",
       "Content-Type": "application/json",
     },
+  }).then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
+};
+
+const updateAvatarToServer = (image) => {
+  return fetch(`${requestConfig.baseUrl}/users/me/avatar `, {
+    method: "PATCH",
+    headers: requestConfig.headers,
+    body: JSON.stringify({
+      avatar: image
+    }),
+  }).then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
 
@@ -85,5 +105,6 @@ export {
   addNewCardToServer,
   deleteCardFromServer,
   likeCardRequest,
-  unLikeCardRequest
+  unLikeCardRequest,
+  updateAvatarToServer
 };

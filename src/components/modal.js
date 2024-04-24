@@ -20,7 +20,7 @@ const closedKeyHandler = (evt) => {
 
 // универсальное окно с вопросом
 function openQuestModal(qestionConfig) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     questTitle.textContent = qestionConfig.titleText;
     questButton.textContent = qestionConfig.buttonText;
     popupTypeQuestion.setAttribute("data", qestionConfig.data);

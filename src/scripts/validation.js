@@ -78,13 +78,13 @@ const enableValidation = (validationConfig) => {
     const inputList = Array.from(
       form.querySelectorAll(validationConfig.inputSelector)
     );
-    const formButton = form.querySelector(
+    const buttonElement = form.querySelector(
       validationConfig.submitButtonSelector
     );
 
     toggleButtonState(
       inputList,
-      formButton,
+      buttonElement,
       validationConfig.inactiveButtonClass
     );
     inputList.forEach((inputElement) => {
@@ -97,7 +97,7 @@ const enableValidation = (validationConfig) => {
         );
         toggleButtonState(
           inputList,
-          formButton,
+          buttonElement,
           validationConfig.inactiveButtonClass
         );
       });
@@ -116,6 +116,7 @@ const clearValidation = (formElement, validationConfig) => {
 
   inputList.forEach((input) => {
     input.setCustomValidity("");
+    input.value = "";
     hideInputError(
       formElement,
       input,
@@ -125,6 +126,11 @@ const clearValidation = (formElement, validationConfig) => {
   });
 
   buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+  toggleButtonState(
+    inputList,
+    buttonElement,
+    validationConfig.inactiveButtonClass
+  );
 };
 
 export { enableValidation, clearValidation };

@@ -5,6 +5,7 @@ import {
   getCards,
   getMyProfileInfo,
   updateProfileToServer,
+  updateAvatarToServer,
 } from "./api.js";
 import {
   openPopup,
@@ -14,13 +15,32 @@ import {
 
 let userID = "";
 
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
+
 const cardTemplate = document.querySelector("#card-template").content;
 const placesList = document.querySelector(".places__list");
 
 const profileTitle = document.querySelector(".profile__title");
-const profileImage = document.querySelector(".profile__image");
 const profileDescription = document.querySelector(".profile__description");
 const profileEditButton = document.querySelector(".profile__edit-button");
+
+const profileImage = document.querySelector(".profile__image-avatar");
+const formEditAvatar = document.querySelector(
+  ".popup__form[name='editProfileAvatar']"
+);
+const profileEditAvatarButton = document.querySelector(
+  ".profile__image-avatar-button"
+);
+const avatarUrl = formEditAvatar.querySelector(".popup__input_type_avatar");
+
+const popupEditAvatar = document.querySelector(".popup_type_edit_avatar");
 
 const popupEditProfile = document.querySelector(".popup_type_edit");
 const profileEditForm = document.querySelector(
@@ -54,10 +74,53 @@ const openImagePopup = (evt) => {
   openPopup(popupTypeImage);
 };
 
-const updateProfileFormSubmit = (evt) => {
+//Модальное окно добавления новой карточки
+const addNewCardForm = (evt) => {
+  evt.preventDefault();
+  addNewCardToServer(inputNewCardName.value, inputNewCardUrl.value)
+    .then((card) => {
+      placesList.prepend(
+        createCard(cardTemplate, card, userID, openImagePopup)
+      );
+    })
+    .catch((err) => {
+      console.error(`Ошибка: ${err}`);
+      placesList
+        .append(
+          createCard(
+            cardTemplate,
+            {
+              _id: err,
+              link: err,
+              name: err,
+              owner: { _id: userID },
+              likes: [],
+            },
+            userID,
+            openImagePopup
+          )
+        )
+        .finally(() => clearValidation(formNewCard, validationConfig));
+    });
+  closePopup(popupAddNewCard);
+  evt.target.reset();
+};
+cardAddButton.addEventListener("click", () => {
+  clearValidation(formNewCard, validationConfig);
+  openPopup(popupAddNewCard);
+});
+formNewCard.addEventListener("submit", addNewCardForm);
+
+//Модальное окно редактирования профиля
+const renderProfileInfo = (profile) => {
+  profileTitle.textContent = profile.name;
+  profileDescription.textContent = profile.about;
+  profileImage.src = profile.avatar;
+};
+
+const submitUpdateProfileForm = (evt) => {
   evt.preventDefault();
   updateProfileToServer(profileNameInput.value, profileJobInput.value)
-    .then((res) => res.json())
     .then((profile) => renderProfileInfo(profile))
     .catch((err) =>
       renderProfileInfo({
@@ -69,61 +132,44 @@ const updateProfileFormSubmit = (evt) => {
   closePopup(popupEditProfile);
 };
 
-const addNewCardForm = (evt) => {
-  evt.preventDefault();
-  addNewCardToServer(inputNewCardName.value, inputNewCardUrl.value)
-    .then((res) => res.json())
-    .then((card) => {
-      placesList.prepend(
-        createCard(cardTemplate, card, userID, openImagePopup)
-      );
-    })
-    .catch((err) => console.log(`Ошибка ${err}`));
-
-  closePopup(popupAddNewCard);
-  evt.target.reset();
-};
-
-const validationConfig = {
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
-};
-
-cardAddButton.addEventListener("click", () => {
-  openPopup(popupAddNewCard);
-});
-
-formNewCard.addEventListener("submit", addNewCardForm);
-
 profileEditButton.addEventListener("click", () => {
   profileNameInput.value = profileTitle.textContent;
   profileJobInput.value = profileDescription.textContent;
   clearValidation(profileEditForm, validationConfig);
   openPopup(popupEditProfile);
 });
+profileEditForm.addEventListener("submit", submitUpdateProfileForm);
 
-profileEditForm.addEventListener("submit", updateProfileFormSubmit);
-
-const renderProfileInfo = (profile) => {
-  profileTitle.textContent = profile.name;
-  profileDescription.textContent = profile.about;
-  profileImage.src = profile.avatar;
+//Модальное окно редактирования аватара
+const submitUpdateAvatar = (evt) => {
+  evt.preventDefault();
+  updateAvatarToServer(avatarUrl.value)
+    .then((avatar) => updateAvatar(avatar))
+    .catch((err) => {
+      console.error(err);
+    })
+    .finally(() => {
+      clearValidation(formEditAvatar, validationConfig);
+      closePopup(popupEditAvatar);
+    });
 };
+
+const updateAvatar = (avatar) => {
+  profileImage.src = avatar.avatar;
+};
+profileEditAvatarButton.addEventListener("click", () => {
+  clearValidation(formEditAvatar, validationConfig);
+  openPopup(popupEditAvatar);
+});
+formEditAvatar.addEventListener("submit", submitUpdateAvatar);
 
 //Установка валидации на все формы
 enableValidation(validationConfig);
 //Установка всем popup события закрытия
 initClosedPopups();
+
 //Получить информацию о пользователе с серверва
 getMyProfileInfo()
-  .then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(res.status);
-  })
   .then((res) => {
     renderProfileInfo(res);
     userID = res._id;
@@ -138,14 +184,18 @@ getMyProfileInfo()
 //Загрузить карточки с сервера
 getCards()
   .then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(res.status);
-  })
-  .then((res) => {
     res.forEach((card) => {
       placesList.append(createCard(cardTemplate, card, userID, openImagePopup));
     });
   })
-  .catch((err) => console.log(`Ошибка: ${err}`));
-
-
+  .catch((err) => {
+    console.error(`Ошибка: ${err}`);
+    placesList.append(
+      createCard(
+        cardTemplate,
+        { _id: err, link: err, name: err, owner: { _id: userID }, likes: [] },
+        userID,
+        openImagePopup
+      )
+    );
+  });

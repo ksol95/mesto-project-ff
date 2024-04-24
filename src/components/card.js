@@ -18,9 +18,7 @@ const deleteCard = (evt) => {
         })
         .catch((err) => console.error(`Ошибка: ${err}`));
     })
-    .catch(() => {
-      console.error("Ошибка");
-    });
+    .catch((err) => console.error(`Ошибка: ${err}`));
 };
 
 const likeCard = (evt) => {
@@ -32,26 +30,19 @@ const likeCard = (evt) => {
   if (!card.getAttribute("liked")) {
     likeCardRequest(cardID)
       .then((res) => {
-        if (res.ok) return res.json();
-        return Promise.reject(res.status);
-      })
-      .then((res) => {
         card.setAttribute("liked", true);
         likeButton.classList.add("card__like-button_is-active");
         cardLikeCounter.textContent = res.likes.length;
       })
-      .catch((err) => console.log(`Ошибка: ${err}`));
+      .catch((err) => console.error(`Ошибка: ${err}`));
   } else {
     unLikeCardRequest(cardID)
-      .then((res) => {
-        if (res.ok) return res.json();
-        return Promise.reject(res.status);
-      })
       .then((res) => {
         card.removeAttribute("liked");
         likeButton.classList.remove("card__like-button_is-active");
         cardLikeCounter.textContent = res.likes.length;
-      });
+      })
+      .catch((err) => console.error(`Ошибка: ${err}`));
   }
 };
 

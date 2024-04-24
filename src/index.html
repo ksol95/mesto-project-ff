@@ -25,10 +25,10 @@
       </header>
       <main class="content">
         <section class="profile page__section">
-          <div
-            class="profile__image"
-            style="background-image: url(<%=require('./images/avatar.jpg')%>)"
-          ></div>
+          <div class="profile__image">
+            <img src="<%=require('./images/avatar.jpg')%>" alt="Ваш аватар" class="profile__image-avatar">
+            <button class="profile__image-avatar-button"></button>
+          </div>
           <div class="profile__info">
             <h1 class="profile__title"></h1>
             <button class="profile__edit-button" type="button"></button>
@@ -43,6 +43,27 @@
       <footer class="footer page__section">
         <p class="footer__copyright">© 2021 Mesto Russia</p>
       </footer>
+      <div class="popup popup_type_edit_avatar">
+        <div class="popup__content">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Обновить аввтар</h3>
+          <form class="popup__form" name="editProfileAvatar">
+            <input
+              type="url"
+              name="link"
+              id="avatar-link-input"
+              class="popup__input popup__input_type_avatar"
+              placeholder="Ссылка на картинку"
+              autocomplete="off"
+              required
+            />
+            <span class="popup__input-error avatar-link-input-error"></span>
+            <button type="submit" class="button popup__button">
+              Сохранить
+            </button>
+          </form>
+        </div>
+      </div>
       <div class="popup popup_type_edit">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
