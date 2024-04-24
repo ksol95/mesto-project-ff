@@ -108,6 +108,7 @@ const itImage = (url) => {
     method: "HEAD",
   }).then((res) => {
     const contentType = res.headers.get("Content-Type");
+    alert(contentType);
     if (OKcontentType.some((type) => type === contentType) && res.ok) {
       return res.url;
     }
