@@ -121,6 +121,7 @@ formNewCard.addEventListener("submit", addNewCardForm);
 const renderProfileInfo = (profile) => {
   profileTitle.textContent = profile.name;
   profileDescription.textContent = profile.about;
+  profileImage.src = profile.avatar;
 };
 
 const submitUpdateProfileForm = (evt) => {
