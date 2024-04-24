@@ -18,6 +18,7 @@ const closedKeyHandler = (evt) => {
   }
 };
 
+// универсальное окно с вопросом
 function openQuestModal(qestionConfig) {
   return new Promise((resolve, reject) => {
     questTitle.textContent = qestionConfig.titleText;
