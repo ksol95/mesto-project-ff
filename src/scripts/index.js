@@ -1,13 +1,17 @@
 import { createCard } from "../components/card.js";
 import { enableValidation, clearValidation } from "./validation.js";
 import {
+  addNewCardToServer,
+  getCards,
+  getMyProfileInfo,
+  updateProfileToServer,
+} from "./api.js";
+import {
   openPopup,
   closePopup,
   initClosedPopups,
 } from "../components/modal.js";
 
-const token = "a1b07ad8-68b9-4aea-9bd1-7f4f85e9a697";
-const cohortId = "wff-cohort-12";
 let userID = "";
 
 const cardTemplate = document.querySelector("#card-template").content;
@@ -52,13 +56,30 @@ const openImagePopup = (evt) => {
 
 const updateProfileFormSubmit = (evt) => {
   evt.preventDefault();
-  updateProfileToServer(profileNameInput.value, profileJobInput.value);
+  updateProfileToServer(profileNameInput.value, profileJobInput.value)
+    .then((res) => res.json())
+    .then((profile) => renderProfileInfo(profile))
+    .catch((err) =>
+      renderProfileInfo({
+        name: `Ошибка: ${err}`,
+        about: `Ошибка: ${err}`,
+        avatar: "./images/avatar.jpg",
+      })
+    );
   closePopup(popupEditProfile);
 };
 
 const addNewCardForm = (evt) => {
   evt.preventDefault();
-  addNewCardToServer(inputNewCardName.value, inputNewCardUrl.value);
+  addNewCardToServer(inputNewCardName.value, inputNewCardUrl.value)
+    .then((res) => res.json())
+    .then((card) => {
+      placesList.prepend(
+        createCard(cardTemplate, card, userID, openImagePopup)
+      );
+    })
+    .catch((err) => console.log(`Ошибка ${err}`));
+
   closePopup(popupAddNewCard);
   evt.target.reset();
 };
@@ -87,114 +108,44 @@ profileEditButton.addEventListener("click", () => {
 
 profileEditForm.addEventListener("submit", updateProfileFormSubmit);
 
-const getProfileInfo = () => {
-  fetch(`https://nomoreparties.co/v1/${cohortId}/users/me`, {
-    headers: {
-      authorization: token,
-    },
-  })
-    .then((res) => {
-      if (res.ok) return res.json();
-      return Promise.reject(res.status);
-    })
-    .then((res) => {
-      renderProfileInfo(res);
-      userID = res._id;
-    })
-    .catch((err) =>
-      renderProfileInfo({
-        name: `Ошибка: ${err}`,
-        about: `Ошибка: ${err}`,
-        avatar: "./images/avatar.jpg",
-      })
-    );
-};
-
 const renderProfileInfo = (profile) => {
   profileTitle.textContent = profile.name;
   profileDescription.textContent = profile.about;
   profileImage.src = profile.avatar;
 };
 
-const updateProfileToServer = (name, about) => {
-  fetch(`https://nomoreparties.co/v1/${cohortId}/users/me`, {
-    method: "PATCH",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json; charset=UTF-8",
-    },
-    body: JSON.stringify({
-      name: name,
-      about: about,
-    }),
-  })
-    .then((res) => res.json())
-    .then((profile) => renderProfileInfo(profile))
-    .catch((err) =>
-      renderProfileInfo({
-        name: `Ошибка: ${err}`,
-        about: `Ошибка: ${err}`,
-        avatar: "./images/avatar.jpg",
-      })
-    );
-};
-
-const getCards = () => {
-  fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
-    headers: {
-      authorization: "a1b07ad8-68b9-4aea-9bd1-7f4f85e9a697",
-    },
-  })
-    .then((res) => {
-      if (res.ok) return res.json();
-      return Promise.reject(res.status);
-    })
-    .then((res) => {
-      res.forEach((card) => {
-        placesList.append(
-          createCard(cardTemplate, card, userID, openImagePopup)
-        );
-      });
-    })
-    .catch((err) => console.log(`Ошибка: ${err}`));
-};
-
-const addNewCardToServer = (name, link) => {
-  fetch(`https://nomoreparties.co/v1/${cohortId}/cards`, {
-    method: "POST",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: name,
-      link: link,
-    }),
-  })
-    .then((res) => res.json())
-    .then((card) => {
-      placesList.prepend(
-        createCard(cardTemplate, card, userID, openImagePopup)
-      );
-    })
-    .catch((err) => console.log(`Ошибка ${err}`));
-};
-
-export const deleteCardFromServer = (cardID) => {
-  fetch(`https://nomoreparties.co/v1/${cohortId}/cards/${cardID}`, {
-    method: "DELETE",
-    headers: {
-      authorization: token,
-      "Content-Type": "application/json",
-    },
-  });
-};
-
-//Получить информацию о пользователе с серверва
-getProfileInfo();
 //Установка валидации на все формы
 enableValidation(validationConfig);
 //Установка всем popup события закрытия
 initClosedPopups();
+//Получить информацию о пользователе с серверва
+getMyProfileInfo()
+  .then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(res.status);
+  })
+  .then((res) => {
+    renderProfileInfo(res);
+    userID = res._id;
+  })
+  .catch((err) =>
+    renderProfileInfo({
+      name: `Ошибка: ${err}`,
+      about: `Ошибка: ${err}`,
+      avatar: "./images/avatar.jpg",
+    })
+  );
 //Загрузить карточки с сервера
-getCards();
+getCards()
+  .then((res) => {
+    if (res.ok) return res.json();
+    return Promise.reject(res.status);
+  })
+  .then((res) => {
+    res.forEach((card) => {
+      placesList.append(createCard(cardTemplate, card, userID, openImagePopup));
+    });
+  })
+  .catch((err) => console.log(`Ошибка: ${err}`));
+
+

@@ -1,4 +1,9 @@
 const popups = document.querySelectorAll(".popup");
+
+const popupTypeQuestion = document.querySelector(".popup_type_question");
+const questButton = popupTypeQuestion.querySelector(".popup__button");
+const questTitle = popupTypeQuestion.querySelector(".popup__title");
+
 const closePopup = (popup) => {
   popup.classList.remove("popup_is-opened");
   document.removeEventListener("keydown", closedKeyHandler);
@@ -12,6 +17,19 @@ const closedKeyHandler = (evt) => {
     closePopup(document.querySelector(".popup_is-opened"));
   }
 };
+
+function openQuestModal(qestionConfig) {
+  return new Promise((resolve, reject) => {
+    questTitle.textContent = qestionConfig.titleText;
+    questButton.textContent = qestionConfig.buttonText;
+    popupTypeQuestion.setAttribute("data", qestionConfig.data);
+    questButton.addEventListener("click", () => {
+      resolve();
+      closePopup(popupTypeQuestion);
+    });
+    openPopup(popupTypeQuestion);
+  });
+}
 
 // Добавляю события закрытия по кнопке и оверлей всем popup
 function initClosedPopups() {
@@ -30,4 +48,4 @@ function initClosedPopups() {
   });
 }
 
-export { openPopup, closePopup, initClosedPopups };
+export { openPopup, closePopup, initClosedPopups, openQuestModal };
