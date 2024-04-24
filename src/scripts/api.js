@@ -7,14 +7,14 @@ const requestConfig = {
   },
 };
 
-const getMyProfileInfo = () => {
+const getMyProfileInfo = new Promise((resolve, reject) => {
   return fetch(`${requestConfig.baseUrl}/users/me`, {
     headers: requestConfig.headers,
   }).then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(res.status);
+    if (res.ok) resolve(res.json());
+    reject(res.status);
   });
-};
+});
 
 const updateProfileToServer = (name, about) => {
   return fetch(`${requestConfig.baseUrl}/users/me`, {
@@ -30,14 +30,14 @@ const updateProfileToServer = (name, about) => {
   });
 };
 
-const getCards = () => {
+const getCards = new Promise((resolve, reject) => {
   return fetch(`${requestConfig.baseUrl}/cards`, {
     headers: requestConfig.headers,
   }).then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(res.status);
+    if (res.ok) resolve(res.json());
+    reject(res.status);
   });
-};
+});
 
 const addNewCardToServer = (name, link) => {
   return fetch(`${requestConfig.baseUrl}/cards`, {
@@ -101,7 +101,6 @@ const updateAvatarToServer = (image) => {
   });
 };
 
-
 //Неработает исправить
 const itImage = (url) => {
   return fetch(url, {
@@ -115,14 +114,15 @@ const itImage = (url) => {
   });
 };
 
+const getAllInfo = [getMyProfileInfo, getCards];
+
 export {
-  getMyProfileInfo,
   updateProfileToServer,
-  getCards,
   addNewCardToServer,
   deleteCardFromServer,
   likeCardRequest,
   unLikeCardRequest,
   updateAvatarToServer,
   itImage,
+  getAllInfo,
 };

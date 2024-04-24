@@ -2,11 +2,10 @@ import { createCard } from "../components/card.js";
 import { enableValidation, clearValidation } from "./validation.js";
 import {
   addNewCardToServer,
-  getCards,
-  getMyProfileInfo,
   updateProfileToServer,
   updateAvatarToServer,
   itImage,
+  getAllInfo,
 } from "./api.js";
 import {
   openPopup,
@@ -79,7 +78,6 @@ const openImagePopup = (evt) => {
 const addNewCardForm = (evt) => {
   evt.preventDefault();
   formNewCard.querySelector(".button").textContent = "Сохранение...";
-
   addNewCardToServer(inputNewCardName.value, inputNewCardUrl.value)
     .then((card) => {
       placesList.prepend(
@@ -122,6 +120,7 @@ const renderProfileInfo = (profile) => {
   profileTitle.textContent = profile.name;
   profileDescription.textContent = profile.about;
   profileImage.src = profile.avatar;
+  userID = profile._id;
 };
 
 const submitUpdateProfileForm = (evt) => {
@@ -142,6 +141,7 @@ const submitUpdateProfileForm = (evt) => {
 };
 
 profileEditButton.addEventListener("click", () => {
+  clearValidation(formNewCard, validationConfig);
   profileNameInput.value = profileTitle.textContent;
   profileJobInput.value = profileDescription.textContent;
   openPopup(popupEditProfile);
@@ -178,39 +178,51 @@ profileEditAvatarButton.addEventListener("click", () => {
 });
 formEditAvatar.addEventListener("submit", submitUpdateAvatar);
 
-//Установка валидации на все формы
-enableValidation(validationConfig);
-//Установка всем popup события закрытия
-initClosedPopups();
+// //Получить информацию о пользователе с серверва
+// getMyProfileInfo()
+//   .then((res) => {
+//     renderProfileInfo(res);
+//     userID = res._id;
+//   })
+//   .catch((err) =>
+//     renderProfileInfo({
+//       name: `Ошибка: ${err}`,
+//       about: `Ошибка: ${err}`,
+//       avatar: "./images/avatar.jpg",
+//     })
+//   );
+// //Загрузить карточки с сервера
+// getCards()
+//   .then((res) => {
+//     res.forEach((card) => {
+//       placesList.append(createCard(cardTemplate, card, userID, openImagePopup));
+//     });
+//   })
+//   .catch((err) => {
+//     console.error(`Ошибка: ${err}`);
+//     placesList.append(
+//       createCard(
+//         cardTemplate,
+//         { _id: err, link: err, name: err, owner: { _id: userID }, likes: [] },
+//         userID,
+//         openImagePopup
+//       )
+//     );
+//   });
 
-//Получить информацию о пользователе с серверва
-getMyProfileInfo()
-  .then((res) => {
-    renderProfileInfo(res);
-    userID = res._id;
-  })
-  .catch((err) =>
-    renderProfileInfo({
-      name: `Ошибка: ${err}`,
-      about: `Ошибка: ${err}`,
-      avatar: "./images/avatar.jpg",
-    })
-  );
-//Загрузить карточки с сервера
-getCards()
-  .then((res) => {
-    res.forEach((card) => {
+Promise.all(getAllInfo)
+  .then(([userInfo,cardsInfo]) => {
+    //Вывод информации о пользователе
+    renderProfileInfo(userInfo);
+    //Вывод карточек
+    cardsInfo.forEach((card) => {
       placesList.append(createCard(cardTemplate, card, userID, openImagePopup));
     });
   })
-  .catch((err) => {
-    console.error(`Ошибка: ${err}`);
-    placesList.append(
-      createCard(
-        cardTemplate,
-        { _id: err, link: err, name: err, owner: { _id: userID }, likes: [] },
-        userID,
-        openImagePopup
-      )
-    );
+  .catch((err) => console.error(`Ошибка: ${err}`))
+  .finally(() => {
+    //Установка валидации на все формы
+    enableValidation(validationConfig);
+    //Установка всем popup события закрытия
+    initClosedPopups();
   });

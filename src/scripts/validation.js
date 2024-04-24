@@ -71,7 +71,7 @@ const enableValidation = (validationConfig) => {
     document.querySelectorAll(validationConfig.formSelector)
   );
   formList.forEach((form) => {
-    form.addEventListener("submit", function (evt) {
+    form.addEventListener("submit", (evt) => {
       evt.preventDefault();
     });
 
@@ -82,13 +82,13 @@ const enableValidation = (validationConfig) => {
       validationConfig.submitButtonSelector
     );
 
-    toggleButtonState(
-      inputList,
-      buttonElement,
-      validationConfig.inactiveButtonClass
-    );
+    // toggleButtonState(
+    //   inputList,
+    //   buttonElement,
+    //   validationConfig.inactiveButtonClass
+    // );
     inputList.forEach((inputElement) => {
-      inputElement.addEventListener("input", function () {
+      inputElement.addEventListener("input", () => {
         checkInputValidity(
           form,
           inputElement,

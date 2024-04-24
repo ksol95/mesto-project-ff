@@ -25,7 +25,7 @@ function openQuestModal(qestionConfig) {
     questButton.textContent = qestionConfig.buttonText;
     popupTypeQuestion.setAttribute("data", qestionConfig.data);
     questButton.addEventListener("click", () => {
-      resolve();
+      resolve(true);
       closePopup(popupTypeQuestion);
     });
     openPopup(popupTypeQuestion);
