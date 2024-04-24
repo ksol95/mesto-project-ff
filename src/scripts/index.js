@@ -6,6 +6,7 @@ import {
   getMyProfileInfo,
   updateProfileToServer,
   updateAvatarToServer,
+  itImage,
 } from "./api.js";
 import {
   openPopup,
@@ -77,6 +78,8 @@ const openImagePopup = (evt) => {
 //Модальное окно добавления новой карточки
 const addNewCardForm = (evt) => {
   evt.preventDefault();
+  formNewCard.querySelector(".button").textContent = "Сохранение...";
+
   addNewCardToServer(inputNewCardName.value, inputNewCardUrl.value)
     .then((card) => {
       placesList.prepend(
@@ -100,7 +103,10 @@ const addNewCardForm = (evt) => {
             openImagePopup
           )
         )
-        .finally(() => clearValidation(formNewCard, validationConfig));
+        .finally(() => {
+          clearValidation(formNewCard, validationConfig);
+          formNewCard.querySelector(".button").textContent = "Сохранить";
+        });
     });
   closePopup(popupAddNewCard);
   evt.target.reset();
@@ -115,27 +121,28 @@ formNewCard.addEventListener("submit", addNewCardForm);
 const renderProfileInfo = (profile) => {
   profileTitle.textContent = profile.name;
   profileDescription.textContent = profile.about;
-  profileImage.src = profile.avatar;
 };
 
 const submitUpdateProfileForm = (evt) => {
   evt.preventDefault();
+  profileEditForm.querySelector(".button").textContent = "Сохранение...";
   updateProfileToServer(profileNameInput.value, profileJobInput.value)
     .then((profile) => renderProfileInfo(profile))
     .catch((err) =>
       renderProfileInfo({
         name: `Ошибка: ${err}`,
         about: `Ошибка: ${err}`,
-        avatar: "./images/avatar.jpg",
       })
-    );
-  closePopup(popupEditProfile);
+    )
+    .finally(() => {
+      profileEditForm.querySelector(".button").textContent = "Сохранить";
+      closePopup(popupEditProfile);
+    });
 };
 
 profileEditButton.addEventListener("click", () => {
   profileNameInput.value = profileTitle.textContent;
   profileJobInput.value = profileDescription.textContent;
-  clearValidation(profileEditForm, validationConfig);
   openPopup(popupEditProfile);
 });
 profileEditForm.addEventListener("submit", submitUpdateProfileForm);
@@ -143,19 +150,26 @@ profileEditForm.addEventListener("submit", submitUpdateProfileForm);
 //Модальное окно редактирования аватара
 const submitUpdateAvatar = (evt) => {
   evt.preventDefault();
-  updateAvatarToServer(avatarUrl.value)
-    .then((avatar) => updateAvatar(avatar))
-    .catch((err) => {
-      console.error(err);
+  formEditAvatar.querySelector(".button").textContent = "Сохранение...";
+  itImage(avatarUrl.value)
+    .then((url) => {
+      updateAvatarToServer(url)
+        .then((res) => updateAvatar(res.avatar))
+        .catch((err) => console.error(`Ошибка: ${err}`))
+        .finally(() => {
+          clearValidation(formEditAvatar, validationConfig);
+          closePopup(popupEditAvatar);
+        });
     })
-    .finally(() => {
+    .catch((err) => {
+      console.log(`Неподходящий тип : ${err}`);
       clearValidation(formEditAvatar, validationConfig);
-      closePopup(popupEditAvatar);
     });
+  formEditAvatar.querySelector(".button").textContent = "Сохранить";
 };
 
 const updateAvatar = (avatar) => {
-  profileImage.src = avatar.avatar;
+  profileImage.src = avatar;
 };
 profileEditAvatarButton.addEventListener("click", () => {
   clearValidation(formEditAvatar, validationConfig);

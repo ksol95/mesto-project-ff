@@ -1,3 +1,4 @@
+const OKcontentType = ["image/webp", "image/jpeg", "image/gif", "image/jpg"];
 const requestConfig = {
   baseUrl: "https://nomoreparties.co/v1/wff-cohort-12",
   headers: {
@@ -11,12 +12,12 @@ const getMyProfileInfo = () => {
     headers: requestConfig.headers,
   }).then((res) => {
     if (res.ok) return res.json();
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(res.status);
   });
 };
 
 const updateProfileToServer = (name, about) => {
-  fetch(`${requestConfig.baseUrl}/users/me`, {
+  return fetch(`${requestConfig.baseUrl}/users/me`, {
     method: "PATCH",
     headers: requestConfig.headers,
     body: JSON.stringify({
@@ -25,7 +26,7 @@ const updateProfileToServer = (name, about) => {
     }),
   }).then((res) => {
     if (res.ok) return res.json();
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(res.status);
   });
 };
 
@@ -34,7 +35,7 @@ const getCards = () => {
     headers: requestConfig.headers,
   }).then((res) => {
     if (res.ok) return res.json();
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(res.status);
   });
 };
 
@@ -48,7 +49,7 @@ const addNewCardToServer = (name, link) => {
     }),
   }).then((res) => {
     if (res.ok) return res.json();
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(res.status);
   });
 };
 
@@ -58,7 +59,7 @@ const deleteCardFromServer = (cardID) => {
     headers: requestConfig.headers,
   }).then((res) => {
     if (res.ok) return res.json();
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(res.status);
   });
 };
 
@@ -68,7 +69,7 @@ const likeCardRequest = (cardID) => {
     headers: requestConfig.headers,
   }).then((res) => {
     if (res.ok) return res.json();
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(res.status);
   });
 };
 
@@ -81,7 +82,7 @@ const unLikeCardRequest = (cardID) => {
     },
   }).then((res) => {
     if (res.ok) return res.json();
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return Promise.reject(res.status);
   });
 };
 
@@ -90,11 +91,27 @@ const updateAvatarToServer = (image) => {
     method: "PATCH",
     headers: requestConfig.headers,
     body: JSON.stringify({
-      avatar: image
+      avatar: image,
     }),
   }).then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(`Ошибка: ${res.status}`);
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(res.status);
+  });
+};
+
+
+//Неработает исправить
+const itImage = (url) => {
+  return fetch(url, {
+    method: "HEAD",
+  }).then((res) => {
+    const contentType = res.headers.get("Content-Type");
+    if (OKcontentType.some((type) => type === contentType) && res.ok) {
+      return res.url;
+    }
+    return Promise.reject(contentType);
   });
 };
 
@@ -106,5 +123,6 @@ export {
   deleteCardFromServer,
   likeCardRequest,
   unLikeCardRequest,
-  updateAvatarToServer
+  updateAvatarToServer,
+  itImage,
 };
