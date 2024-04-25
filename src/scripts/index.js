@@ -241,7 +241,7 @@ const submitUpdateProfileForm = (evt) => {
 };
 
 profileEditButton.addEventListener("click", () => {
-  clearValidation(formNewCard, validationConfig);
+  clearValidation(profileEditForm, validationConfig);
   profileNameInput.value = profileTitle.textContent;
   profileJobInput.value = profileDescription.textContent;
   openPopup(popupEditProfile);
