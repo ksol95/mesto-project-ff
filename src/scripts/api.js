@@ -101,12 +101,13 @@ const updateAvatarToServer = (image) => {
   });
 };
 
-//Неработает исправить
+//Неработает c некоторыми ссылками, незнаю как исправить, связано с cors
 const itImage = (url) => {
   return fetch(url, {
     method: "HEAD",
   }).then((res) => {
     const contentType = res.headers.get("Content-Type");
+    console.log(contentType);
     if (OKcontentType.some((type) => type === contentType) && res.ok) {
       return res.url;
     }

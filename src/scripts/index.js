@@ -86,7 +86,12 @@ const addNewCardForm = (evt) => {
       );
     })
     .catch((err) => {
-      openQuestModal({ titleText: `Ошибка: ${err}`, buttonText: "Ок", data: "" });
+      closePopup(popupAddNewCard);
+      openQuestModal({
+        titleText: `Ошибка: ${err}`,
+        buttonText: "Ок",
+        data: "",
+      });
       placesList
         .append(
           createCard(
@@ -157,14 +162,25 @@ const submitUpdateAvatar = (evt) => {
     .then((url) => {
       updateAvatarToServer(url)
         .then((res) => updateAvatar(res.avatar))
-        .catch((err) => openQuestModal({ titleText: `Ошибка: ${err}`, buttonText: "Ок", data: "" }))
+        .catch((err) => {
+          closePopup(popupEditAvatar);
+          openQuestModal({
+            titleText: `Ошибка: ${err}`,
+            buttonText: "Ок",
+            data: "",
+          });
+        })
         .finally(() => {
           clearValidation(formEditAvatar, validationConfig);
-          closePopup(popupEditAvatar);
         });
     })
     .catch((err) => {
-      openQuestModal({ titleText: `Ошибка: ${err}`, buttonText: "Ок", data: "" })
+      closePopup(popupEditAvatar);
+      openQuestModal({
+        titleText: `Ошибка: ${err}`,
+        buttonText: "Ок",
+        data: "",
+      });
       clearValidation(formEditAvatar, validationConfig);
     });
   formEditAvatar.querySelector(".button").textContent = "Сохранить";
