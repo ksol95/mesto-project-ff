@@ -241,10 +241,9 @@ const submitUpdateProfileForm = (evt) => {
 };
 
 profileEditButton.addEventListener("click", () => {
-  formNewCard.reset();
+  clearValidation(formNewCard, validationConfig);
   profileNameInput.value = profileTitle.textContent;
   profileJobInput.value = profileDescription.textContent;
-  clearValidation(formNewCard, validationConfig);
   openPopup(popupEditProfile);
 });
 
@@ -295,6 +294,7 @@ const updateAvatar = (avatar) => {
 };
 
 profileEditAvatarButton.addEventListener("click", () => {
+  formEditAvatar.reset();
   clearValidation(formEditAvatar, validationConfig);
   openPopup(popupEditAvatar);
 });
