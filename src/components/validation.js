@@ -2,8 +2,8 @@ const showInputError = (
   formElement,
   inputElement,
   errorMessage,
-  errorClass = "popup__error_visible",
-  inputErrorClass = "popup__input_type_error"
+  errorClass,
+  inputErrorClass
 ) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   inputElement.classList.add(inputErrorClass);
@@ -14,8 +14,8 @@ const showInputError = (
 const hideInputError = (
   formElement,
   inputElement,
-  errorClass = "popup__error_visible",
-  inputErrorClass = "popup__input_type_error"
+  errorClass,
+  inputErrorClass
 ) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   inputElement.classList.remove(inputErrorClass);
@@ -104,7 +104,7 @@ const clearValidation = (formElement, validationConfig) => {
   const buttonElement = formElement.querySelector(
     validationConfig.submitButtonSelector
   );
-  
+
   const inputList = Array.from(
     formElement.querySelectorAll(validationConfig.inputSelector)
   );

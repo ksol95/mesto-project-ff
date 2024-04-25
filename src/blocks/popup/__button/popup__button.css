@@ -25,6 +25,7 @@
   color: #000;
   background-color: #fff;
   border: 1px solid #000;
+  pointer-events: none;
 }
 
 @media screen and (max-width: 568px) {

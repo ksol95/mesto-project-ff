@@ -241,6 +241,7 @@ const submitUpdateProfileForm = (evt) => {
 };
 
 profileEditButton.addEventListener("click", () => {
+  formNewCard.reset();
   profileNameInput.value = profileTitle.textContent;
   profileJobInput.value = profileDescription.textContent;
   clearValidation(formNewCard, validationConfig);
