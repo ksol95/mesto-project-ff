@@ -7,6 +7,11 @@ const requestConfig = {
   },
 };
 
+const checkResponse = (res) => {
+  if (res.ok) return res.json();
+  return Promise.reject(res.status);
+};
+
 const getMyProfileInfo = new Promise((resolve, reject) => {
   return fetch(`${requestConfig.baseUrl}/users/me`, {
     headers: requestConfig.headers,
@@ -33,10 +38,7 @@ const updateProfileToServer = (name, about) => {
       name: name,
       about: about,
     }),
-  }).then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(res.status);
-  });
+  }).then((res) => checkResponse(res));
 };
 
 const addNewCardToServer = (name, link) => {
@@ -47,43 +49,28 @@ const addNewCardToServer = (name, link) => {
       name: name,
       link: link,
     }),
-  }).then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(res.status);
-  });
+  }).then((res) => checkResponse(res));
 };
 
 const deleteCardFromServer = (cardID) => {
   return fetch(`${requestConfig.baseUrl}/cards/${cardID}`, {
     method: "DELETE",
     headers: requestConfig.headers,
-  }).then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(res.status);
-  });
+  }).then((res) => checkResponse(res));
 };
 
 const likeCardRequest = (cardID) => {
   return fetch(`${requestConfig.baseUrl}//cards/likes/${cardID}`, {
     method: "PUT",
     headers: requestConfig.headers,
-  }).then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(res.status);
-  });
+  }).then((res) => checkResponse(res));
 };
 
 const unLikeCardRequest = (cardID) => {
   return fetch(`${requestConfig.baseUrl}//cards/likes/${cardID}`, {
     method: "DELETE",
-    headers: {
-      authorization: "a1b07ad8-68b9-4aea-9bd1-7f4f85e9a697",
-      "Content-Type": "application/json",
-    },
-  }).then((res) => {
-    if (res.ok) return res.json();
-    return Promise.reject(res.status);
-  });
+    headers: requestConfig.headers,
+  }).then((res) => checkResponse(res));
 };
 
 const updateAvatarToServer = (image) => {
@@ -93,12 +80,7 @@ const updateAvatarToServer = (image) => {
     body: JSON.stringify({
       avatar: image,
     }),
-  }).then((res) => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(res.status);
-  });
+  }).then((res) => checkResponse(res));
 };
 
 //Неработает c некоторыми ссылками, незнаю как исправить, связано с cors
@@ -107,7 +89,6 @@ const itImage = (url) => {
     method: "HEAD",
   }).then((res) => {
     const contentType = res.headers.get("Content-Type");
-    console.log(contentType);
     if (OKcontentType.some((type) => type === contentType) && res.ok) {
       return res.url;
     }

@@ -82,11 +82,6 @@ const enableValidation = (validationConfig) => {
       validationConfig.submitButtonSelector
     );
 
-    // toggleButtonState(
-    //   inputList,
-    //   buttonElement,
-    //   validationConfig.inactiveButtonClass
-    // );
     inputList.forEach((inputElement) => {
       inputElement.addEventListener("input", () => {
         checkInputValidity(
@@ -109,14 +104,13 @@ const clearValidation = (formElement, validationConfig) => {
   const buttonElement = formElement.querySelector(
     validationConfig.submitButtonSelector
   );
-
+  
   const inputList = Array.from(
     formElement.querySelectorAll(validationConfig.inputSelector)
   );
 
   inputList.forEach((input) => {
     input.setCustomValidity("");
-    input.value = "";
     hideInputError(
       formElement,
       input,

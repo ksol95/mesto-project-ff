@@ -1,9 +1,3 @@
-const popups = document.querySelectorAll(".popup");
-
-const popupTypeQuestion = document.querySelector(".popup_type_question");
-const questButton = popupTypeQuestion.querySelector(".popup__button");
-const questTitle = popupTypeQuestion.querySelector(".popup__title");
-
 const closePopup = (popup) => {
   popup.classList.remove("popup_is-opened");
   document.removeEventListener("keydown", closedKeyHandler);
@@ -18,22 +12,8 @@ const closedKeyHandler = (evt) => {
   }
 };
 
-// универсальное окно с вопросом
-function openQuestModal(qestionConfig) {
-  return new Promise((resolve) => {
-    questTitle.textContent = qestionConfig.titleText;
-    questButton.textContent = qestionConfig.buttonText;
-    popupTypeQuestion.setAttribute("data", qestionConfig.data);
-    questButton.addEventListener("click", () => {
-      closePopup(popupTypeQuestion);
-      resolve(true);
-    });
-    openPopup(popupTypeQuestion);
-  });
-}
-
 // Добавляю события закрытия по кнопке и оверлей всем popup
-function initClosedPopups() {
+const initClosedPopups = (popups) => {
   popups.forEach((popup) => {
     popup.classList.add("popup_is-animated");
     // Клик по кнопке закрытия
@@ -47,6 +27,6 @@ function initClosedPopups() {
       }
     });
   });
-}
+};
 
-export { openPopup, closePopup, initClosedPopups, openQuestModal };
+export { openPopup, closePopup, initClosedPopups };
