@@ -16,6 +16,15 @@ const getMyProfileInfo = new Promise((resolve, reject) => {
   });
 });
 
+const getCards = new Promise((resolve, reject) => {
+  return fetch(`${requestConfig.baseUrl}/cards`, {
+    headers: requestConfig.headers,
+  }).then((res) => {
+    if (res.ok) resolve(res.json());
+    reject(res.status);
+  });
+});
+
 const updateProfileToServer = (name, about) => {
   return fetch(`${requestConfig.baseUrl}/users/me`, {
     method: "PATCH",
@@ -29,15 +38,6 @@ const updateProfileToServer = (name, about) => {
     return Promise.reject(res.status);
   });
 };
-
-const getCards = new Promise((resolve, reject) => {
-  return fetch(`${requestConfig.baseUrl}/cards`, {
-    headers: requestConfig.headers,
-  }).then((res) => {
-    if (res.ok) resolve(res.json());
-    reject(res.status);
-  });
-});
 
 const addNewCardToServer = (name, link) => {
   return fetch(`${requestConfig.baseUrl}/cards`, {
@@ -114,7 +114,7 @@ const itImage = (url) => {
   });
 };
 
-const getAllInfo = [getMyProfileInfo, getCards];
+const requestsProfileCards = [getMyProfileInfo, getCards];
 
 export {
   updateProfileToServer,
@@ -124,5 +124,5 @@ export {
   unLikeCardRequest,
   updateAvatarToServer,
   itImage,
-  getAllInfo,
+  requestsProfileCards,
 };

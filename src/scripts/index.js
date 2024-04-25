@@ -5,12 +5,13 @@ import {
   updateProfileToServer,
   updateAvatarToServer,
   itImage,
-  getAllInfo,
+  requestsProfileCards,
 } from "./api.js";
 import {
   openPopup,
   closePopup,
   initClosedPopups,
+  openQuestModal,
 } from "../components/modal.js";
 
 let userID = "";
@@ -85,7 +86,7 @@ const addNewCardForm = (evt) => {
       );
     })
     .catch((err) => {
-      console.error(`Ошибка: ${err}`);
+      openQuestModal({ titleText: `Ошибка: ${err}`, buttonText: "Ок", data: "" });
       placesList
         .append(
           createCard(
@@ -156,14 +157,14 @@ const submitUpdateAvatar = (evt) => {
     .then((url) => {
       updateAvatarToServer(url)
         .then((res) => updateAvatar(res.avatar))
-        .catch((err) => console.error(`Ошибка: ${err}`))
+        .catch((err) => openQuestModal({ titleText: `Ошибка: ${err}`, buttonText: "Ок", data: "" }))
         .finally(() => {
           clearValidation(formEditAvatar, validationConfig);
           closePopup(popupEditAvatar);
         });
     })
     .catch((err) => {
-      console.log(`Неподходящий тип : ${err}`);
+      openQuestModal({ titleText: `Ошибка: ${err}`, buttonText: "Ок", data: "" })
       clearValidation(formEditAvatar, validationConfig);
     });
   formEditAvatar.querySelector(".button").textContent = "Сохранить";
@@ -178,40 +179,9 @@ profileEditAvatarButton.addEventListener("click", () => {
 });
 formEditAvatar.addEventListener("submit", submitUpdateAvatar);
 
-// //Получить информацию о пользователе с серверва
-// getMyProfileInfo()
-//   .then((res) => {
-//     renderProfileInfo(res);
-//     userID = res._id;
-//   })
-//   .catch((err) =>
-//     renderProfileInfo({
-//       name: `Ошибка: ${err}`,
-//       about: `Ошибка: ${err}`,
-//       avatar: "./images/avatar.jpg",
-//     })
-//   );
-// //Загрузить карточки с сервера
-// getCards()
-//   .then((res) => {
-//     res.forEach((card) => {
-//       placesList.append(createCard(cardTemplate, card, userID, openImagePopup));
-//     });
-//   })
-//   .catch((err) => {
-//     console.error(`Ошибка: ${err}`);
-//     placesList.append(
-//       createCard(
-//         cardTemplate,
-//         { _id: err, link: err, name: err, owner: { _id: userID }, likes: [] },
-//         userID,
-//         openImagePopup
-//       )
-//     );
-//   });
-
-Promise.all(getAllInfo)
-  .then(([userInfo,cardsInfo]) => {
+//Запрос с сервера информации о пользователе и все карточки карточки
+Promise.all(requestsProfileCards)
+  .then(([userInfo, cardsInfo]) => {
     //Вывод информации о пользователе
     renderProfileInfo(userInfo);
     //Вывод карточек
@@ -219,7 +189,9 @@ Promise.all(getAllInfo)
       placesList.append(createCard(cardTemplate, card, userID, openImagePopup));
     });
   })
-  .catch((err) => console.error(`Ошибка: ${err}`))
+  .catch((err) =>
+    openQuestModal({ titleText: `Ошибка: ${err}`, buttonText: "Ок", data: "" })
+  )
   .finally(() => {
     //Установка валидации на все формы
     enableValidation(validationConfig);

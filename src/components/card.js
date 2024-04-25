@@ -6,19 +6,33 @@ import {
 import { openQuestModal } from "./modal";
 
 const deleteCard = (evt) => {
+  const card = evt.target.closest(".card");
+  const cardID = card.getAttribute("id");
   openQuestModal({
     buttonText: "Ок",
     titleText: "Вы уверены?",
-    data: evt.target.closest(".card").getAttribute("id"),
+    data: cardID,
   })
     .then(() => {
-      deleteCardFromServer(evt.target.closest(".card").getAttribute("id"))
+      deleteCardFromServer(cardID)
         .then(() => {
-          evt.target.closest(".card").remove();
+          card.remove();
         })
-        .catch((err) => console.error(`Ошибка: ${err}`));
+        .catch((err) => {
+          openQuestModal({
+            titleText: `Ошибка: ${err}`,
+            buttonText: "Ок",
+            data: "",
+          });
+        });
     })
-    .catch((err) => console.error(`Ошибка: ${err}`));
+    .catch((err) => {
+      openQuestModal({
+        titleText: `Ошибка: ${err}`,
+        buttonText: "Ок",
+        data: "",
+      });
+    });
 };
 
 const likeCard = (evt) => {
@@ -34,7 +48,14 @@ const likeCard = (evt) => {
         likeButton.classList.add("card__like-button_is-active");
         cardLikeCounter.textContent = res.likes.length;
       })
-      .catch((err) => console.error(`Ошибка: ${err}`));
+      .catch((err) => {
+        console.error(`Ошибка: ${err}`);
+        openQuestModal({
+          titleText: `Ошибка: ${err}`,
+          buttonText: "Ок",
+          data: "",
+        });
+      });
   } else {
     unLikeCardRequest(cardID)
       .then((res) => {
@@ -42,7 +63,13 @@ const likeCard = (evt) => {
         likeButton.classList.remove("card__like-button_is-active");
         cardLikeCounter.textContent = res.likes.length;
       })
-      .catch((err) => console.error(`Ошибка: ${err}`));
+      .catch((err) => {
+        openQuestModal({
+          titleText: `Ошибка: ${err}`,
+          buttonText: "Ок",
+          data: "",
+        });
+      });
   }
 };
 
@@ -64,6 +91,7 @@ function createCard(template, cardInfo, myID, openImagePopup) {
   card.querySelector(".card__like-button").addEventListener("click", likeCard);
   card.querySelector(".card__like-counter").textContent = cardInfo.likes.length;
 
+  //Определяем ставил ли лайк пользователь
   if (cardInfo.likes.some((user) => user._id === myID)) {
     card.setAttribute("liked", true);
     card
