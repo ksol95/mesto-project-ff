@@ -12,21 +12,12 @@ const closedKeyHandler = (evt) => {
   }
 };
 
-// Добавляю события закрытия по кнопке и оверлей всем popup
-const initClosedPopups = (popups) => {
-  popups.forEach((popup) => {
-    popup.classList.add("popup_is-animated");
-    // Клик по кнопке закрытия
-    popup.querySelector(".popup__close").addEventListener("click", () => {
-      closePopup(popup);
-    });
-    // Клик по "оверлэй"
-    popup.addEventListener("click", (evt) => {
-      if (evt.target.classList.contains("popup_is-opened")) {
-        closePopup(popup);
-      }
-    });
-  });
-};
+// Обработчик клика по "оверлэй"
+const handleOverlayPopupClose = (evt) =>{
+  const popup = evt.target;
+  if (popup.classList.contains("popup_is-opened")) {
+    closePopup(popup);
+  }
+}
 
-export { openPopup, closePopup, initClosedPopups };
+export { openPopup, closePopup, handleOverlayPopupClose  };

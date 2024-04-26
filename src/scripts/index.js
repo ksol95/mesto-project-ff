@@ -1,4 +1,10 @@
-import { createCard, removeCardById, getCardID } from "../components/card.js";
+import {
+  createCard,
+  removeCardById,
+  getCardID,
+  likeCard,
+  itLikedCard,
+} from "../components/card.js";
 import { enableValidation, clearValidation } from "../components/validation.js";
 import {
   addNewCardToServer,
@@ -13,7 +19,7 @@ import {
 import {
   openPopup,
   closePopup,
-  initClosedPopups,
+  handleOverlayPopupClose,
 } from "../components/modal.js";
 
 let userID = "";
@@ -69,6 +75,17 @@ const popupTypeQuestion = document.querySelector(".popup_type_question");
 const questButton = popupTypeQuestion.querySelector(".popup__button");
 const questTitle = popupTypeQuestion.querySelector(".popup__title");
 
+// Установка обработчиков закрытия для всех Popup, по Overlay и кнопке "Х"
+const initClosedPopups = (popups) => {
+  popups.forEach((popup) => {
+    popup.classList.add("popup_is-animated");
+    // Клик по кнопке закрытия
+    popup.querySelector(".popup__close").addEventListener("click", () => {
+      closePopup(popup);
+    });
+    popup.addEventListener("click", handleOverlayPopupClose);
+  });
+};
 // универсальное окно с вопросом
 const openQuestModal = (qestionConfig) => {
   questTitle.textContent = qestionConfig.titleText;
@@ -77,10 +94,15 @@ const openQuestModal = (qestionConfig) => {
   questButton.addEventListener("click", qestionConfig.handle);
   openPopup(popupTypeQuestion);
 };
-//Закрытие окна с ошибкой
-function closeErrPopup(evt) {
-  closePopup(popupTypeQuestion);
-  questButton.removeEventListener("click", closeErrPopup);
+//Удаление карточки после подверждения
+function handleQuestButtonDeleteCard(evt) {
+  deleteCardFromServer(removedCardID)
+    .then((res) => {
+      removeCardById(removedCardID);
+      closePopup(popupTypeQuestion);
+    })
+    .catch((err) => console.error(`Ошибка: ${err}`));
+  questButton.removeEventListener("click", handleQuestButtonDeleteCard);
 }
 //Вызов окна с подтверждением удаления и с передачей
 // функции удаления карточки для кнопки "Ок" в окне подтверждения
@@ -93,57 +115,19 @@ const handleDeleteCard = (evt) => {
     handle: handleQuestButtonDeleteCard,
   });
 };
-//Удаление карточки после подверждения
-function handleQuestButtonDeleteCard(evt) {
-  closePopup(popupTypeQuestion);
-  deleteCardFromServer(removedCardID)
-    .then((res) => {
-      removeCardById(removedCardID);
-    })
-    .catch((err) => console.error(`Ошибка: ${err}`));
-  questButton.removeEventListener("click", handleQuestButtonDeleteCard);
-}
-
 //Обработчик кнопки лайка
 const handleLikeCard = (evt) => {
-  const likeButton = evt.target;
-  const card = likeButton.closest(".card");
-  const cardID = card.getAttribute("id");
-  const cardLikeCounter = card.querySelector(".card__like-counter");
-
-  if (!card.getAttribute("liked")) {
-    likeCardRequest(cardID)
-      .then((res) => {
-        card.setAttribute("liked", true);
-        likeButton.classList.add("card__like-button_is-active");
-        cardLikeCounter.textContent = res.likes.length;
-      })
-      .catch((err) =>
-        openQuestModal({
-          titleText: `Ошибка: ${err}`,
-          buttonText: "Ок",
-          data: "",
-          handle: closeErrPopup,
-        })
-      );
-  } else {
+  const cardID = getCardID(evt);
+  if (itLikedCard(cardID)) {
     unLikeCardRequest(cardID)
-      .then((res) => {
-        card.removeAttribute("liked");
-        likeButton.classList.remove("card__like-button_is-active");
-        cardLikeCounter.textContent = res.likes.length;
-      })
-      .catch((err) =>
-        openQuestModal({
-          titleText: `Ошибка: ${err}`,
-          buttonText: "Ок",
-          data: "",
-          handle: closeErrPopup,
-        })
-      );
+      .then((res) => likeCard(res.likes, cardID, userID))
+      .catch((err) => console.error(`Ошибка: ${err}`));
+  } else {
+    likeCardRequest(cardID)
+      .then((res) => likeCard(res.likes, cardID, userID))
+      .catch((err) => console.error(`Ошибка: ${err}`));
   }
 };
-
 // Загрузка данных с карточки в модальное окно
 const openImagePopup = (card) => {
   imageFromPopup.src = card.link;
@@ -152,7 +136,6 @@ const openImagePopup = (card) => {
   captionFromPopup.textContent = card.name;
   openPopup(popupTypeImage);
 };
-
 //Добавления новой карточки
 const addNewCardForm = (evt) => {
   evt.preventDefault();
@@ -171,15 +154,10 @@ const addNewCardForm = (evt) => {
         )
       );
       closePopup(popupAddNewCard);
+      formNewCard.reset();
     })
     .catch((err) => {
-      closePopup(popupAddNewCard);
-      openQuestModal({
-        titleText: `Ошибка: ${err}`,
-        buttonText: "Ок",
-        data: "",
-        handle: closeErrPopup,
-      });
+      console.error(`Ошибка: ${err}`);
       placesList.append(
         createCard(
           cardTemplate,
@@ -192,14 +170,14 @@ const addNewCardForm = (evt) => {
           },
           userID,
           openImagePopup,
-          handleDeleteCard
+          handleDeleteCard,
+          handleLikeCard
         )
       );
     })
     .finally(() => {
       clearValidation(formNewCard, validationConfig);
       saveButton.textContent = "Сохранить";
-      formNewCard.reset();
     });
 };
 
@@ -228,12 +206,7 @@ const submitUpdateProfileForm = (evt) => {
       closePopup(popupEditProfile);
     })
     .catch((err) => {
-      closePopup(popupEditProfile);
-      openQuestModal({
-        titleText: `Ошибочка: ${err}`,
-        buttonText: "Ок",
-        data: "",
-      });
+      console.error(`Ошибка: ${err}`);
     })
     .finally(() => {
       saveButton.textContent = "Сохранить";
@@ -259,33 +232,18 @@ const submitUpdateAvatar = (evt) => {
       updateAvatarToServer(url)
         .then((res) => {
           closePopup(popupEditAvatar);
+          formEditAvatar.reset();
           updateAvatar(res.avatar);
         })
         .catch((err) => {
-          closePopup(popupEditAvatar);
-          openQuestModal({
-            titleText: `Ошибка: ${err}`,
-            buttonText: "Ок",
-            data: "",
-            handle: closeErrPopup,
-          });
+          console.error(`Ошибка: ${err}`);
         })
         .finally(() => {
           clearValidation(formEditAvatar, validationConfig);
-          formEditAvatar.reset();
           saveButton.textContent = "Сохранить";
         });
     })
-    .catch((err) => {
-      closePopup(popupEditAvatar);
-      openQuestModal({
-        titleText: `Ошибка: ${err}`,
-        buttonText: "Ок",
-        data: "",
-        handle: closeErrPopup,
-      });
-      clearValidation(formEditAvatar, validationConfig);
-    })
+    .catch((err) => console.error(`Ошибка: ${err}`))
     .finally(() => (saveButton.textContent = "Сохранить"));
 };
 
@@ -320,14 +278,7 @@ Promise.all(requestsProfileCards)
       );
     });
   })
-  .catch((err) =>
-    openQuestModal({
-      titleText: `Ошибка: ${err}`,
-      buttonText: "Ок",
-      data: "",
-      handle: closeErrPopup,
-    })
-  )
+  .catch((err) => console.error(`Ошибка: ${err}`))
   .finally(() => {
     //Установка валидации на все формы
     enableValidation(validationConfig);
