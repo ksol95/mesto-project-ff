@@ -6,17 +6,32 @@ const requestConfig = {
     "Content-Type": "application/json",
   },
 };
-
 const checkResponse = (res) => {
-  if (res.ok) return res.json();
-  return Promise.reject(res.status);
+  console.log(res);
+  return res.ok ? res.json() : Promise.reject(res.status);
 };
+
+// const getMyProfileInfo = () => {
+  // return fetch(`${requestConfig.baseUrl}/users/me`, {
+  //   method: "GET",
+  //   headers: requestConfig.headers,
+  // }).then(checkResponse);
+// };
+// const getCards = () => {
+//   return fetch(`${requestConfig.baseUrl}/cards`, {
+//     method: "GET",
+//     headers: requestConfig.headers,
+//   }).then(checkResponse);
+// };
 
 const getMyProfileInfo = new Promise((resolve, reject) => {
   return fetch(`${requestConfig.baseUrl}/users/me`, {
+    method: "GET",
     headers: requestConfig.headers,
   }).then((res) => {
-    if (res.ok) resolve(res.json());
+    if (res.ok) {
+      resolve(res.json());
+    }
     reject(res.status);
   });
 });
@@ -30,6 +45,8 @@ const getCards = new Promise((resolve, reject) => {
   });
 });
 
+const requestsProfileCards = [getMyProfileInfo, getCards];
+
 const updateProfileToServer = (name, about) => {
   return fetch(`${requestConfig.baseUrl}/users/me`, {
     method: "PATCH",
@@ -38,7 +55,7 @@ const updateProfileToServer = (name, about) => {
       name: name,
       about: about,
     }),
-  }).then((res) => checkResponse(res));
+  }).then(checkResponse);
 };
 
 const addNewCardToServer = (name, link) => {
@@ -49,28 +66,28 @@ const addNewCardToServer = (name, link) => {
       name: name,
       link: link,
     }),
-  }).then((res) => checkResponse(res));
+  }).then(checkResponse);
 };
 
 const deleteCardFromServer = (cardID) => {
   return fetch(`${requestConfig.baseUrl}/cards/${cardID}`, {
     method: "DELETE",
     headers: requestConfig.headers,
-  }).then((res) => checkResponse(res));
+  }).then(checkResponse);
 };
 
 const likeCardRequest = (cardID) => {
   return fetch(`${requestConfig.baseUrl}//cards/likes/${cardID}`, {
     method: "PUT",
     headers: requestConfig.headers,
-  }).then((res) => checkResponse(res));
+  }).then(checkResponse);
 };
 
 const unLikeCardRequest = (cardID) => {
   return fetch(`${requestConfig.baseUrl}//cards/likes/${cardID}`, {
     method: "DELETE",
     headers: requestConfig.headers,
-  }).then((res) => checkResponse(res));
+  }).then(checkResponse);
 };
 
 const updateAvatarToServer = (image) => {
@@ -80,7 +97,7 @@ const updateAvatarToServer = (image) => {
     body: JSON.stringify({
       avatar: image,
     }),
-  }).then((res) => checkResponse(res));
+  }).then(checkResponse);
 };
 
 //Неработает c некоторыми ссылками, незнаю как исправить, связано с cors
@@ -95,8 +112,6 @@ const itImage = (url) => {
     return Promise.reject(contentType);
   });
 };
-
-const requestsProfileCards = [getMyProfileInfo, getCards];
 
 export {
   updateProfileToServer,
