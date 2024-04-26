@@ -10,41 +10,20 @@ const checkResponse = (res) => {
   return res.ok ? res.json() : Promise.reject(res.status);
 };
 
-// const getMyProfileInfo = () => {
-  // return fetch(`${requestConfig.baseUrl}/users/me`, {
-  //   method: "GET",
-  //   headers: requestConfig.headers,
-  // }).then(checkResponse);
-// };
-// const getCards = () => {
-//   return fetch(`${requestConfig.baseUrl}/cards`, {
-//     method: "GET",
-//     headers: requestConfig.headers,
-//   }).then(checkResponse);
-// };
-
-const getMyProfileInfo = new Promise((resolve, reject) => {
+const getMyProfileInfo = () => {
   return fetch(`${requestConfig.baseUrl}/users/me`, {
     method: "GET",
     headers: requestConfig.headers,
-  }).then((res) => {
-    if (res.ok) {
-      resolve(res.json());
-    }
-    reject(res.status);
-  });
-});
-
-const getCards = new Promise((resolve, reject) => {
+  }).then(checkResponse);
+};
+const getCards = () => {
   return fetch(`${requestConfig.baseUrl}/cards`, {
+    method: "GET",
     headers: requestConfig.headers,
-  }).then((res) => {
-    if (res.ok) resolve(res.json());
-    reject(res.status);
-  });
-});
+  }).then(checkResponse);
+};
 
-const requestsProfileCards = [getMyProfileInfo, getCards];
+const requestsProfileCards = [getMyProfileInfo(), getCards()];
 
 const updateProfileToServer = (name, about) => {
   return fetch(`${requestConfig.baseUrl}/users/me`, {

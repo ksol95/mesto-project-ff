@@ -285,3 +285,12 @@ Promise.all(requestsProfileCards)
     //Установка всем popup события закрытия
     initClosedPopups(popups);
   });
+
+const OKcontentType = ["image/webp", "image/jpeg", "image/gif", "image/jpg"];
+const requestConfig = {
+  baseUrl: "https://nomoreparties.co/v1/wff-cohort-12",
+  headers: {
+    authorization: "a1b07ad8-68b9-4aea-9bd1-7f4f85e9a697",
+    "Content-Type": "application/json",
+  },
+};
