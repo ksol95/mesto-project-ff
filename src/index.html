@@ -23,10 +23,11 @@
           class="logo header__logo"
         />
       </header>
+
       <main class="content">
         <section class="profile page__section">
           <div class="profile__image">
-            <img src="" alt="Ваш аватар" class="profile__image-avatar">
+            <img src="#" alt="Ваш аватар" class="profile__image-avatar" />
             <button class="profile__image-avatar-button"></button>
           </div>
           <div class="profile__info">
@@ -40,10 +41,12 @@
           <ul class="places__list"></ul>
         </section>
       </main>
+
       <footer class="footer page__section">
         <p class="footer__copyright">© 2021 Mesto Russia</p>
       </footer>
-      <div class="popup popup_type_edit_avatar">
+
+      <div class="popup" id="popupEditAvatar">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Обновить аватар</h3>
@@ -52,7 +55,7 @@
               type="url"
               name="link"
               id="avatar-link-input"
-              class="popup__input popup__input_type_avatar"
+              class="popup__input"
               placeholder="Ссылка на картинку"
               autocomplete="off"
               required
@@ -64,7 +67,8 @@
           </form>
         </div>
       </div>
-      <div class="popup popup_type_edit">
+
+      <div class="popup" id="popupEditProfile">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Редактировать профиль</h3>
@@ -73,7 +77,7 @@
               type="text"
               name="name"
               id="name-input"
-              class="popup__input popup__input_type_name"
+              class="popup__input"
               placeholder="Имя"
               autocomplete="name"
               required
@@ -88,7 +92,7 @@
               type="text"
               name="description"
               id="description-input"
-              class="popup__input popup__input_type_description"
+              class="popup__input"
               placeholder="Занятие"
               autocomplete="organization-title"
               required
@@ -104,16 +108,17 @@
           </form>
         </div>
       </div>
-      <div class="popup popup_type_new-card">
+
+      <div class="popup" id="popupAddNewCard">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Новое место</h3>
-          <form class="popup__form" name="new-place">
+          <form class="popup__form" name="newPlace">
             <input
               type="text"
               name="place-name"
               id="place-name"
-              class="popup__input popup__input_type_card-name"
+              class="popup__input"
               placeholder="Название"
               autocomplete="off"
               required
@@ -127,30 +132,30 @@
               type="url"
               name="link"
               id="link-input"
-              class="popup__input popup__input_type_url"
+              class="popup__input"
               placeholder="Ссылка на картинку"
               autocomplete="off"
               required
             />
             <span class="popup__input-error link-input-error"></span>
-            <button type="submit" class="button popup__button">
+            <button type="submit" class="button popup__button" id="govno">
               Сохранить
             </button>
           </form>
         </div>
       </div>
-      <div class="popup popup_type_image">
-        <div class="popup__content popup__content_content_image">
+
+      <div class="popup" id="popupImagePreview">
+        <div class="popup__content">
           <button type="button" class="popup__close"></button>
-          <img src="" alt="" class="popup__image" />
+          <img src="#" alt="" class="popup__image" />
           <p class="popup__caption"></p>
         </div>
       </div>
-    </div>
 
-    <div class="popup popup_type_question">
-        <div class="popup__content popup__content_content_question">
-          <button type="button" class="popup__close"></button>          
+      <div class="popup" id="popupQuestion">
+        <div class="popup__content">
+          <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Вы уверены?</h3>
           <button type="submit" class="button popup__button">Да</button>
         </div>
