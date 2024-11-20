@@ -63,6 +63,7 @@ const inputProfileJob = formEditProfile.querySelector("#description-input");
 const cardAddButton = document.querySelector(".profile__add-button");
 
 const formNewPlace = document.forms.newPlace;
+const saveBtnNewPlace = formNewPlace.querySelector(".button");
 const inputPlaceName = formNewPlace.querySelector("#place-name");
 const inputPlaceLink = formNewPlace.querySelector("#link-input");
 const imageFromPopup = modal.popupImagePreview.querySelector(".popup__image");
@@ -136,8 +137,7 @@ const openImagePopup = (card) => {
 //Добавления новой карточки
 const addNewCardForm = (evt) => {
   evt.preventDefault();
-  const saveButton = formNewPlace.querySelector(".button");
-  saveButton.textContent = "Сохранение...";
+  saveBtnNewPlace.textContent = "Сохранение...";
   addNewCardToServer(inputPlaceName.value, inputPlaceLink.value)
     .then((card) => {
       placesList.prepend(
@@ -174,7 +174,7 @@ const addNewCardForm = (evt) => {
     })
     .finally(() => {
       clearValidation(formNewPlace, validationConfig);
-      saveButton.textContent = "Сохранить";
+      saveBtnNewPlace.textContent = "Сохранить";
     });
 };
 
